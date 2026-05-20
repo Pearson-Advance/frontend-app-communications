@@ -16,16 +16,20 @@ export default function PageContainer(props) {
   const { children } = props;
   const { courseId } = useParams();
 
+  const isCCXCourse = (courseId) => courseId?.startsWith('ccx-v1:');
+
   const [courseMetadata, setCourseMetadata] = useState();
 
   useEffect(() => {
     async function fetchCourseMetadata() {
       let metadataResponse;
-      let cohortsResponse;
+      let cohortsResponse  = { cohorts: [] };
 
       try {
         metadataResponse = await getCourseHomeCourseMetadata(courseId);
-        cohortsResponse = await getCohorts(courseId);
+        if (!isCCXCourse(courseId)) {
+          cohortsResponse = await getCohorts(courseId);
+        }
       } catch (e) {
         setCourseMetadata({
           org: '',
